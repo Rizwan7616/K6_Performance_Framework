@@ -1,0 +1,26 @@
+version: '3.8'
+
+networks:
+  k6-net:
+
+services:
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    networks:
+      - k6-net
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - k6-net
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true

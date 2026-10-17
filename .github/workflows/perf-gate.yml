@@ -1,0 +1,29 @@
+name: k6 Performance Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  k6_perf_gate:
+    name: k6 Automated Performance Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run k6 User Flow Test & Verify SLOs
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: scripts/user-flow-test.js
+        env:
+          TARGET_URL: 'https://test-api.k6.io'
+
+      - name: Upload HTML Performance Summary Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-performance-report
+          path: summary.html
